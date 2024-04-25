@@ -12,13 +12,22 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
+import com.example.demo.dto.CustomerDTO;
+import com.example.demo.entity.Customer;
+import com.example.demo.entity.PasswordResetToken;
 import com.example.demo.repository.CustomerRepository;
+import com.example.demo.repository.PasswordResetTokenRepository;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.securityconfig.CustomUserDetailsService;
+import com.example.demo.service.CustomerService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,6 +45,18 @@ public class LoginController {
 	
 	@Autowired
 	CustomUserDetailsService customuserservice;
+	
+	@Autowired
+	CustomerService customerservice;
+	
+	@Autowired
+	private PasswordResetTokenRepository passwordTokenRepository;
+	
+	@Autowired
+	private CustomerRepository customerrepository;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	@GetMapping("/success")
 	public void loginPageRedirect(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException{
@@ -108,5 +129,69 @@ public class LoginController {
 			
 		}
 	
+	/*	
+	@PostMapping("/user/resetPassword")
+	public GenericResponse resetPassword(HttpServletRequest request, @RequestParam("email") String userEmail) {
+	 //   User user = userService.findUserByEmail(userEmail);
+		
+		Customer cust = customerservice.fetchCustomerDetails(userEmail);
+		
+	    if (cust == null) {
+	      //  throw new UserNotFoundException();
+	    	throw new UsernameNotFoundException("user not found");
+	    }
+	    String token = UUID.randomUUID().toString();
+	    customerservice.createPasswordResetTokenForUser(cust, token);
+	    mailSender.send(constructResetTokenEmail(getAppUrl(request), 
+	      request.getLocale(), token, cust));
+	    return new GenericResponse(
+	      messages.getMessage("message.resetPasswordEmail", null, 
+	      request.getLocale()));
+	}
+	*/
+	
+	@PostMapping("/forgotpasswordprocess")
+	public String forgotPasswordProcess(CustomerDTO customerDTO) {
+		String output = "";
+		System.out.println("Now we are in forgotpasswordprocess method");
+		System.out.println(customerDTO.getEmail());
+		Customer cust = customerservice.fetchCustomerDetails(customerDTO.getEmail());
+		
+		if (cust != null) {
+			output = customerservice.sendEmail(cust);
+		}
+		if (output.equals("success")) {
+			System.out.println("Now we are in success block");
+			return "redirect:/displayforgotpasswordform?success";
+		}
+		return "redirect:/displayforgotpasswordform?mailiderror";
+	}
+	
+	@GetMapping("/resetPassword/{token}")
+	public String resetPasswordForm(@PathVariable String token, Model model) {
+		PasswordResetToken reset = passwordTokenRepository.findByToken(token);
+		if (reset != null && customerservice.hasExipred(reset.getExpiryDateTime())) {
+			model.addAttribute("email", reset.getCustomer().getEmail());
+			return "resetpasswordform.jsp";
+		}
+		return "redirect:/forgotPassword?error";
+	}
+	
+	@PostMapping("/resetpasswordprocess")
+	public String passwordResetProcess(CustomerDTO customerDTO) {
+		Customer cust = customerrepository.findByEmail(customerDTO.getEmail());
+		if(cust != null) {
+			
+			cust.setPassword(passwordEncoder.encode(customerDTO.getPassword()));
+			customerrepository.save(cust);
+			
+		}
+		return "redirect:/loginform";
+	}
+
+	
+	
+	
+
 
 }

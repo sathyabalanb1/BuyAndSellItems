@@ -40,6 +40,9 @@
 							<div class="mb-3 snackappformbutton">
 							<button type="submit" class="btn btn-primary">Login</button>
 							</div>
+							<div class="mb-3 snackappformbutton">
+							<a href="/displayforgotpasswordform" class="btn btn-primary">Forgot Password</a>
+							</div>
 						</form>
 						<div class="mb-3">
 							<a href="/oauth2/authorization/google"
