@@ -11,12 +11,17 @@
 </head>
 <body>
 
-	<c:if test="${param.error!=null}">
-		<p style="color: red;">Username or Password May be Incorrect</p>
-	</c:if>
+	
 	
 <%@include file="../headerfooter/header.jsp"%>
 
+<c:if test="${param.error!=null}">
+		<p style="color: red;">Username or Password May be Incorrect</p>
+	</c:if>
+	
+	<c:if test="${passwordchangemessage !=null}">
+		<p style="color: green;">${passwordchangemessage}</p>
+    </c:if>
 
 	<div class="container my-5">
 		<div class="row justify-content-center">

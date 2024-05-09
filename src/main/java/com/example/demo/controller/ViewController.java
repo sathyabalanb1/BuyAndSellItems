@@ -248,11 +248,7 @@ public class ViewController {
 		return model;
 	}
 	
-	@GetMapping("/displayforgotpasswordform")
-	public String displayForgotPasswordForm()
-	{
-		return "authentication/forgotpasswordform.jsp";
-	}
+	
 	
 
 }

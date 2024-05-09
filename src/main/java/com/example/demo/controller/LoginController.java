@@ -149,7 +149,7 @@ public class LoginController {
 	      request.getLocale()));
 	}
 	*/
-	
+	/*
 	@PostMapping("/forgotpasswordprocess")
 	public String forgotPasswordProcess(CustomerDTO customerDTO) {
 		String output = "";
@@ -189,7 +189,7 @@ public class LoginController {
 		return "redirect:/loginform";
 	}
 
-	
+	*/
 	
 	
 

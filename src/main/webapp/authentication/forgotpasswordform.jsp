@@ -17,8 +17,12 @@
 		<p style="color: red;">Token Expired.Please click on Forgot Password again</p>
 </c:if>
 
-<c:if test="${param.success !=null}">
-		<p style="color: red;">Email sent to you to Reset Password.Please check Spam folder if mail not visible!</p>
+<c:if test="${message !=null}">
+		<p style="color: green;">Email sent to you to Reset Password.Please check Spam folder if mail not visible!</p>
+</c:if>
+
+<c:if test="${tokenerror !=null}">
+		<p style="color: red;">Invalid Token</p>
 </c:if>
 
 <c:if test="${param.mailiderror != null}">
@@ -34,7 +38,7 @@
 						<h4 class="mb-0">Forgot Password</h4>
 					</div>
 					<div class="card-body">
-						<form name="myForm" id="myForm" action="/forgotpasswordprocess" method="post">
+						<form name="myForm" id="myForm" action="/forgot_password" method="post">
 							<div class="mb-3">
 								<label for="email" class="form-label">Email ID</label> 
 								<input type="text" name="email" id="email" class="form-control">

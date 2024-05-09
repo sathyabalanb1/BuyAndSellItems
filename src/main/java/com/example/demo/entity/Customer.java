@@ -41,6 +41,9 @@ public class Customer {
     @UpdateTimestamp
     @Column(columnDefinition = "TIMESTAMP",insertable = false)
     private LocalDateTime updatetime ;
+    
+    @Column(name = "reset_password_token")
+    private String resetPasswordToken;
 
 	public int getId() {
 		return id;
@@ -105,7 +108,15 @@ public class Customer {
 	public void setUpdatetime(LocalDateTime updatetime) {
 		this.updatetime = updatetime;
 	}
+
+	public String getResetPasswordToken() {
+		return resetPasswordToken;
+	}
+
+	public void setResetPasswordToken(String resetPasswordToken) {
+		this.resetPasswordToken = resetPasswordToken;
+	}
     
-   
+    
 
 }

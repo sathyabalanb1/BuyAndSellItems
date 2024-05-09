@@ -1,17 +1,14 @@
 package com.example.demo.service;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.Customer;
-import com.example.demo.entity.PasswordResetToken;
 import com.example.demo.entity.Role;
+import com.example.demo.exception.CustomerNotFoundException;
 import com.example.demo.repository.CustomerRepository;
 import com.example.demo.repository.PasswordResetTokenRepository;
 import com.example.demo.repository.RoleRepository;
@@ -99,6 +96,7 @@ public class CustomerService {
 			
 	*/
 	
+	/*   previous attempt
 	public String sendEmail(Customer cust) {
 		try {
 			String resetLink = generateResetToken(cust);
@@ -123,23 +121,7 @@ public class CustomerService {
 		}
 
 	}
-	/*
-	public String generateResetToken(Customer cust) {
-		UUID uuid = UUID.randomUUID();
-		LocalDateTime currentDateTime = LocalDateTime.now();
-		LocalDateTime expiryDateTime = currentDateTime.plusMinutes(30);
-		PasswordResetToken resetToken = new PasswordResetToken();
-		resetToken.setCustomer(cust);
-		resetToken.setToken(uuid.toString());
-		resetToken.setExpiryDateTime(expiryDateTime);
-		PasswordResetToken token = passwordTokenRepository.save(resetToken);
-		if (token != null) {
-			String endpointUrl = "http://localhost:8080/resetPassword";
-			return endpointUrl + "/" + resetToken.getToken();
-		}
-		return "";
-	}
-	*/
+	
 	
 	public String generateResetToken(Customer cust) {
 		UUID uuid = UUID.randomUUID();
@@ -169,6 +151,31 @@ public class CustomerService {
 		LocalDateTime currentDateTime = LocalDateTime.now();
 		return expiryDateTime.isAfter(currentDateTime);
 	}
+	
+	*/
+	
+	public void updateResetPasswordToken(String token, String email) throws CustomerNotFoundException {
+        Customer customer = customerrepository.findByEmail(email);
+        if (customer != null) {
+            customer.setResetPasswordToken(token);
+            customerrepository.save(customer);
+        } else {
+            throw new CustomerNotFoundException("Could not find any customer with the email " + email);
+        }
+    }
+	
+	public Customer getByResetPasswordToken(String token) {
+        return customerrepository.findByResetPasswordToken(token);
+    }
+	
+	public void updatePassword(Customer customer, String newPassword) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        customer.setPassword(encodedPassword);
+         
+        customer.setResetPasswordToken(null);
+        customerrepository.save(customer);
+    }
 	
 	
 
