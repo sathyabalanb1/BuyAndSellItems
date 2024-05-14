@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,7 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.example.demo.dto.OrderDTO;
 import com.example.demo.dto.ProductData;
+import com.example.demo.entity.Customer;
+import com.example.demo.service.CartService;
+import com.example.demo.service.CustomerService;
 import com.example.demo.service.OrderService;
 
 
@@ -22,6 +28,13 @@ public class OrderController {
 	
 	@Autowired
 	OrderService orderservice;
+	
+	@Autowired
+	CustomerService customerservice;
+	
+	@Autowired
+	CartService cartservice;
+	
 	
 	@PostMapping("/makeorder")
 	public ResponseEntity<String> makeOrder(@RequestBody List<ProductData> selectedProducts)
@@ -70,6 +83,25 @@ public class OrderController {
 		
 		return new ModelAndView("redirect:/orderdetails");
 			
+	}
+	
+	// make order from cart
+	
+	@PostMapping("/makeorderfromcart")
+	public ResponseEntity<String> makeOrderFromCart(@RequestBody List<OrderDTO> cartitems)
+	{  
+		
+		orderservice.processOrderFromCart(cartitems);
+		
+	//	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	//	String uname = authentication.getName();
+		
+	//	Customer cust = customerservice.fetchCustomerDetails(uname);
+	//	cartservice.removeCart(cust);
+		
+		return new ResponseEntity<>("Order placed successfully", HttpStatus.OK);
+		
+	//	return ResponseEntity.ok("Order placed successfully");		
 	}
 	
 	

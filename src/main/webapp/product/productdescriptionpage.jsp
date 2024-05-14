@@ -60,6 +60,7 @@
 	</form>
 -->	
    <span class="error" id="requiredquantityerror" style="color:red;"></span>
+   <span class="error" id="cartsuccessmessage" style="color:green;"></span>
    
 	<div class="container my-5">
 		<div class="row justify-content-center">
@@ -84,7 +85,10 @@
 							</div>
 							<div class="mb-3">
 								<label for="rquantity" class="form-label">Required Quantity</label> 
-								<input type="number" id="rquantity" name="rquantity"  min="1" max="50"> 
+								<input type="number" onchange="compareQuantity()" id="rquantity" name="rquantity"  min="1" max="50">
+								<span class="error" id="rquantityError" style="color:red;"></span> 
+								<input type="hidden" name="productid" id="productid" value="${product.id}">
+								<input type="hidden" name="customerid" id="customerid" value="${customerid}">
 							</div>
 							<div class="mb-3 snackappformbutton">
 							<button type="submit" id="submitButton" class="btn btn-primary">Add To Cart</button>
@@ -102,8 +106,12 @@
 
 
 </body>
+<script>
+
+</script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
-	<%@include file="../headerfooter/footer.jsp"%>
+<%@include file="../headerfooter/footer.jsp"%>
+<script src="../javascriptfiles/Cartformvalidation.js"></script>
 
 <script src="../javascriptfiles/Descriptionformvalidation.js"></script>
 </html>

@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.example.demo.dto.ProductDTO;
+import com.example.demo.entity.Customer;
 import com.example.demo.entity.Product;
+import com.example.demo.service.CustomerService;
 import com.example.demo.service.ProductService;
 
 
@@ -21,6 +24,9 @@ public class ProductController {
 	
 	@Autowired
 	ProductService productservice;
+	
+	@Autowired
+	CustomerService customerservice;
 	
 	@PostMapping("/addproduct")
 	public String addProduct (ProductDTO prod,Model model)
@@ -66,12 +72,19 @@ public class ProductController {
 	}
 	
 	@GetMapping("/productdescriptionpage")
-	public ModelAndView displayProductDescriptionpage(@RequestParam("pid") int productid)
+	public ModelAndView displayProductDescriptionpage(@RequestParam("pid") int productid, Principal principal)
 	{
 		ModelAndView model = new ModelAndView();
 		
 		Product product = productservice.getProductById(productid);
 		
+		String username = principal.getName();
+		
+		Customer cust = customerservice.fetchCustomerDetails(username);
+		
+		int customerid = cust.getId();
+		
+		model.addObject("customerid", customerid);
 		model.addObject("product", product);
 		model.setViewName("product/productdescriptionpage.jsp");
 		

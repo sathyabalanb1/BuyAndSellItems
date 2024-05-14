@@ -8,11 +8,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.OrderDTO;
 import com.example.demo.dto.ProductData;
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.Orderedproducts;
 import com.example.demo.entity.Orderplacement;
 import com.example.demo.entity.Product;
+import com.example.demo.repository.CartRepository;
 import com.example.demo.repository.CustomerRepository;
 import com.example.demo.repository.OrderedproductsRepository;
 import com.example.demo.repository.OrderplacementRepository;
@@ -33,6 +35,9 @@ public class OrderService {
 	
 	@Autowired
 	OrderedproductsRepository orderedproductsrepository;
+	
+	@Autowired
+	CartRepository cartrepository;
 	
 	public String  processOrder (List<ProductData>pd)
 	{
@@ -136,6 +141,49 @@ public class OrderService {
 	{
 		List<Orderplacement>rejectedorders = orderplacementrepository.findRejectedOrders();
 		return rejectedorders;
+	}
+	
+	//  order from cart
+	
+	public String  processOrderFromCart (List<OrderDTO> cartitems)
+	{
+		int i=0;
+		
+		Orderplacement op = new Orderplacement();
+		
+		
+		while(i<cartitems.size())
+		{
+			int customerid = cartitems.get(i).getCustomerid();
+					
+			Customer cus = customerrepository.findById(customerid).orElse(null);
+			op.setCustomerid(cus);
+			Orderplacement confirmorder = orderplacementrepository.save(op);
+			
+			int productid = cartitems.get(i).getProductid();
+			
+			Product product = productrepository.findById(productid).orElse(null);
+			
+			int quantity = cartitems.get(i).getRequiredquantity();
+			
+			insertOrder(quantity,product,confirmorder);
+			
+			i++;
+			
+		}
+		return "Order placement successfully completed";
+		
+	}
+	
+	public void insertOrderFromCart(int quantity,Product product, Orderplacement confirmorder)
+	{
+		Orderedproducts orderedproducts = new Orderedproducts();
+		orderedproducts.setQuantity(quantity);
+		orderedproducts.setProductid(product);
+		orderedproducts.setOrderid(confirmorder);
+		
+		orderedproductsrepository.save(orderedproducts);
+		
 	}
 	
 

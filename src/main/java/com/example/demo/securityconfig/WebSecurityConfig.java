@@ -81,7 +81,7 @@ public class WebSecurityConfig {
 	    http
 	        .csrf().disable()
 	        .authorizeHttpRequests(request -> request
-	            .requestMatchers("/authentication/**","/login","/customer/**","/images/**","/css/**","/javascriptfiles/**","/registerform","/displayforgotpasswordform","/forgotpasswordprocess","/forgot_password","/resetpassword/**").permitAll()
+	            .requestMatchers("/authentication/**","/login","/customer/**","/images/**","/css/**","/javascriptfiles/**","/registerform","/displayforgotpasswordform","/forgotpasswordprocess","/forgot_password","/resetpassword/**","/makecart").permitAll()
 	            .requestMatchers("/insertcustomer", "/loginform", "/registerform","/forgotpasswordprocess").permitAll()
 	            .requestMatchers("/customer/**","/makeorder","/displayorderplacementform").hasAuthority("Customer")
 	            .requestMatchers("/dealerfrontpage","/createproductform","/dealer/**","/makeorder","/orderdetails").hasAuthority("Dealer")
